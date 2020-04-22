@@ -23,11 +23,21 @@ library("igraph")
 # Working directory
 setwd(file.path(getwd(), "scripts"))
 
+# Metadata and pathway files
 md.f <- "../data/sample-metadata.tsv"
 pw.f <- c("../results/2-picrust2/rep1/pathways_out/path_abun_unstrat_descrip.tsv.gz", "../results/2-picrust2/rep2/pathways_out/path_abun_unstrat_descrip.tsv.gz")
 
-pop.ordr <- c("Ba", "Bg26", "Bg121", "Bg36", "BgBRE", "BgBS90", "BgNMRI", "Water")
+# Population order and color
+pop.data <- matrix(c("Ba",      "#ffac40",
+                     "Bg26",    "#bf4d4d",
+                     "Bg36",    "#a469d6",
+                     "Bg121",   "#ff61e8",
+                     "BgBRE",   "#6be3a7",
+                     "BgBS90",  "#87d687",
+                     "BgNMRI",  "#ab7a78",
+                     "Water",   "#7798e0"), byrow=TRUE, ncol=2)
 
+# Result folder
 res.d <- "../results/3-pathways/"
 
 
@@ -44,7 +54,7 @@ md.t <- read.delim(md.f, header=TRUE, stringsAsFactors=FALSE)
 nb.rep <- unique(md.t[,"Replicate"])
 
 
-mycomb  <- cbind(c("snail", "Water"), combn(pop.ordr[-8],2)) # Remove water
+mycomb  <- cbind(c("snail", "Water"), combn(pop.data[,1][-8],2)) # Remove water
 mydenom <- c("zero", rep("all", ncol(mycomb)-1))
 
 pw.ls <- vector("list", 3)

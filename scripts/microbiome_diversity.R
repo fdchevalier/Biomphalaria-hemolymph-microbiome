@@ -56,30 +56,25 @@ source("microbiome_diversity_func.R")
 
 cat("Setting variables...\n")
 
+# Qiime files
 asv.f  <- "../results/1-qiime/table.qza"
 taxa.f <- "../results/1-qiime/rep-seqs_taxa.qza"
 tree.f <- "../results/1-qiime/rooted-tree.qza"
 
+# Metadata file
 md.f   <- "../data/sample-metadata.tsv"
 
 # Population order and color
-#pop.data <- matrix(c("Ba",      "#ff8f00",
-#                     "Bg26",    "#db224a",
-#                     "Bg121",   "#db22be",
-#                     "Bg36",    "#8622db",
-#                     "BgBRE",   "#3eb379",
-#                     "BgBS90",  "#2bb32b",
-#                     "BgNMRI",  "#713633",
-#                     "Water",   "#0008ff"), byrow=TRUE, ncol=2)
 pop.data <- matrix(c("Ba",      "#ffac40",
                      "Bg26",    "#bf4d4d",
-                     "Bg121",   "#ff61e8",
                      "Bg36",    "#a469d6",
+                     "Bg121",   "#ff61e8",
                      "BgBRE",   "#6be3a7",
                      "BgBS90",  "#87d687",
                      "BgNMRI",  "#ab7a78",
                      "Water",   "#7798e0"), byrow=TRUE, ncol=2)
 
+# Graph output directory
 graph.d <- "../graphs/"
 
 # GGplot options
