@@ -237,3 +237,7 @@ p.ls[[3]] <- ggplot(mydata, aes(x = V4, y = asv)) +
 
 p <- ggarrange(plotlist=p.ls, ncol=1, labels=LETTERS[1:length(p.ls)])
 ggsave(paste0(graph.d,"Fig. 6 - qPCR-diversity.pdf"), p, height=15, width=5)
+
+
+# Clean tmp file
+if (file.exists("Rplots.pdf")) { unlink("Rplots.pdf") }

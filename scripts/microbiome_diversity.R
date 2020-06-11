@@ -631,3 +631,7 @@ for (r in nb.rep) {
 
 ggsave(paste0(graph.d,"taxo-div_hm.pdf"), p.ls[[1]], width=5, height=10, useDingbats=FALSE)
 ggsave(paste0(graph.d,"Supp. Fig. 2 - taxo-div_hm_all.pdf"), p.ls[[2]], width=10, height=10, useDingbats=FALSE)
+
+
+# Clean tmp file
+if (file.exists("Rplots.pdf")) { unlink("Rplots.pdf") }
