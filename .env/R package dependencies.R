@@ -3,6 +3,8 @@ options("repos" = c(CRAN = "https://cran.revolutionanalytics.com"))
 library("devtools")
 library("BiocManager")
 
+install_github("jalvesaq/colorout", ref="7ea9440", upgrade="never")
+
 # Microbiome analysis
 install_bioc("3.10/microbiome", upgrade="never")
 install("phyloseq",   update=FALSE)
