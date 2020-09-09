@@ -10,10 +10,13 @@
 # Packages #
 #==========#
 
-library("ALDEx2")
-library("CoDaSeq")
-library("zCompositions")
-library("igraph")
+suppressMessages({
+    library("ALDEx2")
+    library("CoDaSeq")
+    library("zCompositions")
+    library("igraph")
+})
+
 
 
 #===========#
@@ -105,7 +108,7 @@ for (j in 1:ncol(mycomb)) {
 
         pw.ls[[1]] <- x.all 
 
-        # FDR seting
+        # FDR setting
         myfdr <- 0.05
 
         # Pathway in snails
@@ -143,7 +146,4 @@ for (j in 1:ncol(mycomb)) {
 
     write.table(mytb, paste0(res.d, myobj, mycomb.tmp[2], ".tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 }
-
-
-
 

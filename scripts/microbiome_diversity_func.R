@@ -1,12 +1,21 @@
 # Title: microbiome_diversity_function.R
-# Version: 1.0
+# Version: 1.1
 # Author: Frédéric CHEVALIER <fcheval@txbiomed.org>
 # Created in: 2020-03-25
+# Modified in: 2020-08-31
 
+
+
+#=======================#
+# Computation functions #
+#=======================#
 
 # Standard error
 se <- function(x) { sd(x) / sqrt(length(x)) }
 
+
+# Edited tax_glom function from phyloseq
+## This removed NA columns from the taxa table
 mytax_glom <- function(x, taxrank=NULL, ...) {
     if (is.null(taxrank)) { stop("taxrank required") }
     if (! any(grepl(taxrank, rank_names(x))) ) { stop("taxrank unknown") }
@@ -18,13 +27,14 @@ mytax_glom <- function(x, taxrank=NULL, ...) {
     return(x)
 }
 
+
+# Agglomerate taxa from the same sample category 
 mysample_glom <- function(x, cln) {
 
     myls <- split(get_variable(x), get_variable(x)[,cln])
 
     myotu <- myls %>% lapply(., rownames) %>% sapply(., function(y) rowSums(otu_table(x)[,y]))
 
-#    otu_table(x) <- otu_table(myotu, taxa_are_rows=TRUE)
     myspl <- myls %>% lapply(., function(y) y[1,]) %>% unsplit(., levels(get_variable(x)[,cln]))
     rownames(myspl) <- myspl[,cln]
 
@@ -34,8 +44,7 @@ mysample_glom <- function(x, cln) {
 }
 
 
-
-
+# Generate letter labels from post-hoc test
 generate.label.df <- function(x){
 
     # x         Tukey test
@@ -44,14 +53,14 @@ generate.label.df <- function(x){
     # Dependency
     library(multcompView)
 
-     # Extract labels and factor levels from Tukey post-hoc
-     Tukey.levels <- x
-     Tukey.labels <- data.frame(multcompLetters(Tukey.levels)['Letters'])
+    # Extract labels and factor levels from Tukey post-hoc
+    Tukey.levels <- x
+    Tukey.labels <- data.frame(multcompLetters(Tukey.levels)['Letters'])
 
-     # Put the labels in the same order as in the boxplot
-     Tukey.labels$treatment <- rownames(Tukey.labels)
-#     Tukey.labels           <- Tukey.labels[ order(Tukey.labels$treatment) , ]
-     return(Tukey.labels)
+    # Put the labels in the same order as in the boxplot
+    Tukey.labels$treatment <- rownames(Tukey.labels)
+#    Tukey.labels           <- Tukey.labels[ order(Tukey.labels$treatment) , ]
+    return(Tukey.labels)
 }
 
 
@@ -224,4 +233,57 @@ plotPvalues <- function(pvalue.matrix, alg.order=NULL, show.pvalue=TRUE, font.si
                                         size=font.size, col=pval.col)
     }
     return(gplot)
-} 
+}
+
+
+#------------------------#
+# Distinct color palette #
+#------------------------#
+
+## source: https://github.com/ronammar/randomcoloR/blob/e8bf2c21c4e9e6b14a95e20e0e19853840f41b7e/R/randomcolor.R
+distinctColorPalette <-function(k=1, altCol=FALSE, runTsne=FALSE, seed=42) {
+    # k         number of colors (>= 1). May be ineffective for k > 40.
+    # altCol    Use an alternate color space
+    # runTsne   Preprocess color space with t-SNE to obtain distinct colors. Reduces performance.
+    # seed      number to be repeatable.
+
+    # Dependencies
+    library("cluster")
+    library("colorspace")
+    library("Rtsne")
+
+    # Compute a 2000 color spectrum and convert to LAB
+    runif(1)
+    old_seed <- .Random.seed ## Keep this seed work only locally https://stackoverflow.com/a/14324316/1608734
+    on.exit({.Random.seed <<- old_seed})
+    set.seed(seed)
+    n <- 2e3
+    currentColorSpace <- colorspace::RGB(runif(n), runif(n), runif(n))
+    currentColorSpace <- as(currentColorSpace, "LAB")
+    currentColorSpace <- currentColorSpace@coords
+    if (altCol) {
+        currentColorSpace <- t(unique(grDevices::col2rgb(scales::hue_pal(l=60:100)(n)))) ## Note: hue_pal no longer accepts multiple l
+    }
+
+    if (runTsne) {
+        # Run 2D t-SNE before clustering
+        tsne <- Rtsne(currentColorSpace, perplexity=50, check_duplicates=FALSE, pca=FALSE, max_iter=500)
+        pamx <- pam(tsne$Y, k)  # k-medoids
+        if (altCol) {
+            colors <- rgb(currentColorSpace[pamx$id.med, ], maxColorValue=255)
+        } else {
+            colors <- hex(LAB(currentColorSpace[pamx$id.med, ]))
+        }
+    } else {
+        # Set iter.max to 20 to avoid convergence warnings.
+        km <- kmeans(currentColorSpace, k, iter.max=20)
+        if (altCol) {
+            colors <- rgb(round(km$centers), maxColorValue=255)
+        } else {
+            colors <- unname(hex(LAB(km$centers)))
+        }
+    }
+
+    return(colors)
+}
+

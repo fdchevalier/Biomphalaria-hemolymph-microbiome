@@ -1,14 +1,16 @@
 #!/usr/bin/env Rscript
 # Title: microbiome_density.R
-# Version: 1.0
+# Version: 1.1
 # Author: Frédéric CHEVALIER <fcheval@txbiomed.org>
-# Created in: 2020-03-25
+# Created in: 2020-09-08
 
 
 
 #==========#
 # Packages #
 #==========#
+
+cat("Loading packages...\n")
 
 suppressMessages({
     library("qiime2R")
@@ -40,6 +42,8 @@ q <- function(x) {
 #===========#
 # Variables #
 #===========#
+
+cat("Setting variables...\n")
 
 # Working directory
 setwd(file.path(getwd(), "scripts"))
@@ -86,6 +90,12 @@ mrkr.pred <- read.delim(picrust.f)
 
 # Note: no data cleaning because contaminant are also quantified with qPCR
 asv <- apply(taxa, 2, function (x) sum(x > 0) ) %>% data.frame(asv=.)
+
+# Update mrkr.pred with contaminants
+contam    <- ! rownames(taxa) %in% mrkr.pred[,1]
+contam.mt <- cbind(rownames(taxa)[contam], 1, 1)
+colnames(contam.mt) <- colnames(mrkr.pred)
+mrkr.pred <- rbind(mrkr.pred, contam.mt)
 
 # Reset 16S count prediction for ASV with nsis > 2 because of incertainty of annotation (see PiCRUST documentation)
 mrkr.pred[mrkr.pred[, 3] > 2, 2] <- 1
@@ -236,7 +246,7 @@ p.ls[[3]] <- ggplot(mydata, aes(x = V4, y = asv)) +
         stat_cor(method = "kendall", cor.coef.name = "tau", label.x.npc = "right", label.y.npc = "top", hjust = 1)
 
 p <- ggarrange(plotlist=p.ls, ncol=1, labels=LETTERS[1:length(p.ls)])
-ggsave(paste0(graph.d,"Fig. 6 - qPCR-diversity.pdf"), p, height=15, width=5)
+ggsave(paste0(graph.d,"Fig. 5 - qPCR-diversity.pdf"), p, height=15, width=5)
 
 
 # Clean tmp file

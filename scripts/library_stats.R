@@ -86,7 +86,7 @@ mylb.tb.s <- apply(mylb.tb, 1, function(x) c(mean(x), sd(x), max(x), min(x)) )
 rownames(mylb.tb.s) <- c("Mean", "SD", "Max", "Min")
 
 
-# Per populations and replicates (mean and proportion)
+# Per population and replicate (mean and proportion)
 mytb.s.mn <- split(mydata, paste(mydata[,"Population"], mydata[,"Replicate"])) %>% lapply(., function(x) sapply(x[,mycln], mean) ) %>% as.data.frame()
 mytb.s.sd <- split(mydata, paste(mydata[,"Population"], mydata[,"Replicate"])) %>% lapply(., function(x) sapply(x[,mycln], sd) )   %>% as.data.frame()
 mytb.s.p  <- apply(mytb.s.mn, 2, function(x) x/x[1])
