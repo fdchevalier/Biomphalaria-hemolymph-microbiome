@@ -504,7 +504,7 @@ for (r in nb.rep) {
         p.ls.t[[r]][[i]] <- plotPvalues(mymat, border.col="black", pval.col="black", font.size=3) +
                     xlab(expression(paste(beta,"-dispersion test"))) + ylab("Permanova test") +
                     scale_fill_gradient2(low = "red", mid = "yellow", high = "white", limits = c(NA, 0.05), guide = "colorbar", na.value = "transparent", trans = "log10", breaks = mybreaks, label = format(mybreaks, digit = 2, scientific = TRUE)) +
-                    # guides(fill = guide_colourbar(barwidth = 9, title.vjust = 0.75)) +
+                    guides(fill = guide_colourbar(barwidth = 9, title.vjust = 0.75)) +
                     theme(axis.line = element_blank(), axis.ticks = element_blank(), legend.position = "none")
     }
 }
